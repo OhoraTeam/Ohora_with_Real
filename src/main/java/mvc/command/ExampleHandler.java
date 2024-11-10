@@ -1,6 +1,6 @@
 package mvc.command;
 
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 
 import ohora.domain.DeptVO;
-import ohora.persistence.OhoraDAO;
-import ohora.persistence.OhoraDAOImpl;
+import ohora.persistence.ProductDAO;
+import ohora.persistence.ProductDAOImpl;
 
 public class ExampleHandler implements CommandHandler {
 
@@ -20,7 +20,7 @@ public class ExampleHandler implements CommandHandler {
 		System.out.println("Example Handler process...");
 		
 		Connection conn = ConnectionProvider.getConnection();
-		OhoraDAO dao = new OhoraDAOImpl(conn);
+		ProductDAO dao = new ProductDAOImpl(conn);
 		ArrayList<DeptVO> list = null;
 		
 		try {

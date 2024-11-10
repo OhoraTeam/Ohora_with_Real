@@ -12,7 +12,7 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google" content="notranslate">
-<link rel="stylesheet" href="../resources/cdn-main/oho-signUpForm.css">
+<link rel="stylesheet" href="/projectOhora/resources/cdn-main/oho-signUpForm.css">
 <script src="../resources/cdn-main/example.js"></script>
 <style>
 span.material-symbols-outlined {
@@ -4330,13 +4330,13 @@ span.material-symbols-outlined {
 												<tr class="checked-vali">
 													<th scope="row"><span class="SP_th_Title">아이디</span> <span
 														class="SP_required">*</span></th>
-													<td><input type="text" id="user_login_id" value="asdaa22"
+													<td><input type="text" id="user_login_id" value="asdaa22" data-checked="false"
 														name="user_login_id"
 														style="max-width: calc(100% - 130px); height: 50px !important; line-height: 50px; width: 100% !important; margin: 0 !important; font-size: 16px; border: 1px solid #bababa;">
-														<button type="button" onclick="info_jungbok( 'user_login_id' , document.getElementById('user_login_id').value )"
+														<button type="button" onclick="info_jungbok( 'user_login_id' , 'idMsg' )"
 															style="padding: 0; width: 120px; text-align: center; height: 50px; line-height: 48px; background: #fff; font-size: 17px; margin-left: 10px; display: inline-block; box-sizing: border-box; border: 1px solid #000; font-weight: normal; text-decoration: none; vertical-align: middle; word-spacing: -0.5px; white-space: nowrap; color: #222;">중복
 															확인</button> <!-- 중복확인 -> 온클릭 함수 --> <span id="idMsg"
-														class="txtOK">[ ] 는 사용가능한 아이디입니다.</span> <!-- 중복 검사 완료시 뜨는 메시지 error뜨면 해당 상황에 맞게 오류메시지 뜸-->
+														class="txtOK"></span> <!-- 중복 검사 완료시 뜨는 메시지 error뜨면 해당 상황에 맞게 오류메시지 뜸-->
 
 													</td>
 												</tr>
@@ -4344,16 +4344,18 @@ span.material-symbols-outlined {
 												<tr class="checked-vali">
 													<th scope="row"><span class="SP_th_Title">비밀번호</span>
 														<span class="SP_required">*</span></th>
-													<td><input type="password" id="passwd" name="passwd" value="asd">
+													<td><input type="password" id="passwd" name="passwd" value="1q2w3e4r!">
 														<div class="pwGuide">(영문 대소문자/숫자/특수문자 중 2가지 이상 조합,
-															8자~16자)</div></td>
+															8자~16자)</div>
+															<div class="pwGuide2"></div>
+															
 												</tr>
 
 												<tr class="checked-vali">
 													<th scope="row"><span class="SP_th_Title">비밀번호<br>확인
 															<span class="SP_required">*</span>
 													</span></th>
-													<td><input type="password" id="passwd-confirm" value="asd"
+													<td><input type="password" id="passwd-confirm" value="1q2w3e4r!"
 														name="passwd-confirm"> <span id="pwConfirmMsg"
 														class="">비밀번호가 일치하지 않습니다.</span></td>
 												</tr>
@@ -4369,20 +4371,20 @@ span.material-symbols-outlined {
 												<tr class="checked-vali">
 													<th scope="row"><span class="SP_th_Title">이메일</span> <span
 														class="SP_required">*</span></th>
-													<td><input type="text" id="email" name="email" value="asd@naver.com">
-														<button type="button" onclick="info_jungbok( 'email' , document.getElementById('email').value )">중복
+													<td><input type="text" id="email" name="email" value="asd@naver.com" data-checked="false">
+														<button type="button" onclick="info_jungbok( 'email' , 'emailMsg' )" >중복
 															확인</button> <!-- 중복확인은 온클릭 함수 -->
-														<p id="emailMsg">사용 가능한 이메일입니다.</p> <!-- 클래스 error 뜨면서 유효성 검사함 -->
+														<p id="emailMsg" class="Dupl">사용 가능한 이메일입니다.</p> <!-- 클래스 error 뜨면서 유효성 검사함 -->
 													</td>
 												</tr>
 
 												<tr class="checked-vali">
 													<th scope="row"><span class="SP_th_Title">휴대폰</span> <span
 														class="SP_required">*</span></th>
-													<td><input type="text" id="phone" name="phone" value="01022223333">
-														<button type="button" onclick="info_jungbok('phone' , document.getElementById('phone').value )">휴대폰
+													<td><input type="text" id="phone" name="phone" value="01022223333" data-checked="false">
+														<button type="button" onclick="info_jungbok('phone' , 'phoneMsg' )">휴대폰
 															인증</button> <!-- 폰인증은 온클릭 함수 - 그냥 중복검사 정도하자-->
-														<div class="phoneMsg">이미 등록된 휴대전화입니다.</div></td>
+														<div class="phoneMsg"></div></td>
 
 												</tr>
 
@@ -4442,6 +4444,6 @@ span.material-symbols-outlined {
 		</div>
 	</div>
 </body>
-<script src="../resources/js/oho-signUpForm.js"> </script>
+<script src="/projectOhora/resources/js/oho-signUpForm.js?v=<%=System.currentTimeMillis() %>"> </script>
 <%@include file="footer.jsp"%>
 </html>

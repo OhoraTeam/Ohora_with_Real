@@ -1,5 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<!-- 추가함 -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ page trimDirectiveWhitespaces="true" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -95,13 +99,13 @@
                  <div class="xans-element- xans-order xans-order-emptyitem toggleArea eToggle selected basket_item_wrapper ">
                     <!-- 선택상품 제어 버튼 -->
                      <div class="xans-element- xans-order xans-order-selectorder ">
-                        <a href="#none" class="mini SMScart_allsel_btnTD selected" id="product_select_all" data-status="off">
+                        <a href="javascript:void(0)" class="mini SMScart_allsel_btnTD selected" id="product_select_all" data-status="off">
                             <div class="box">
-                            	<div id="checkcolor1"></div>
+                            	<div id="allCheck" class="checked"></div> <!-- 전체 버튼 -->
                             </div>
                             <span class="count">
                                 전체 상품 (
-                                <span class="all-count">1</span>
+                                <span class="all-count"><%= productCount != null ? productCount : 0 %></span>
                                 )
                             </span>
                         </a>
@@ -111,11 +115,15 @@
                          <div class="xans-element- xans-order xans-order-normnormal xans-record-">
                             <!-- 주문 리스트 -->
                              <div class="xans-element- xans-order xans-order-list">
+		                        <c:if test="${not empty cartList}">
+		                        <c:forEach var="item" items="${cartList}">
+                             	<form id="delForm" action="<%= contextPath %>/cart/delbtn.do" method="post">
                                 <div class="prdInfo xans-record-">
                                     <!-- 체크박스 -->
                                      <input type="checkbox" id="basket_chk_id_0" name="basket_product_normal_type_normal">
                                      <label for="basket_chk_id_0" class="label_for_check">
-                                       <div id="checkcolor2"></div>
+                                       <div data-pdt-id="${item.pdt_id}" data-pdt-count="${item.clist_pdt_count}" data-rate="${item.pdt_discount_rate}" data-price="${item.pdt_amount}" data-quantity="${item.clist_pdt_count}" data-clist-id="${item.clist_id}" class="otherCheck checked buy_product" id="otherCheck_${item.clist_id}" value="${item.clist_select}"></div> <!-- 개인 버튼 -->
+                                       <input type="hidden" name="clist_id" value="${item.clist_id}"> <!-- 추가함 -->
                                      </label>
                                       &nbsp;
                                       <!-- // 체크박스 -->
@@ -124,7 +132,7 @@
                                             <!-- 상품 이미지 -->
                                              <p class="prdImg">
                                                 <a href="/product/detail.html?product_no=2104&cate_no=44">
-                                                    <img loading="lazy" src="https://www.ohora.kr/web/product/tiny/202206/d6bd975b62d701230f1cb6336faea4fa.jpg" alt width="250" height="250">
+                                                    <img loading="lazy" src="${item.pdt_img_url}" alt width="250" height="250">
                                                 </a>
                                              </p>
                                              <!-- // 상품 이미지 -->
@@ -132,7 +140,7 @@
                                                <div class="prdDesc">
                                                 <!-- 상품명 -->
                                                  <strong class="prdName" title="상품명">
-                                                    <a href="/product/detail.html?product_no=2104&cate_no=44">N 딥 네일</a>
+                                                    <a href="/product/detail.html?product_no=2104&cate_no=44">${item.pdt_name}</a>
                                                  </strong>
                                                  <!-- // 상품명 -->
                                                   <!-- 정보영역 -->
@@ -150,25 +158,39 @@
                                                     <li class="price">
                                                         <span class="discount" title="판매가">
                                                             <strong>
-                                                                14,800
+                                                                <c:if test="${item.pdt_discount_rate != null}">
+										                            ${item.pdt_amount}
+										                        </c:if>
                                                             </strong>
                                                             <span class="displaynone"></span>
                                                         </span>
                                                         <span class title="할인판매가">
                                                             <strong>
-                                                                12,580
+                                                                <c:choose>
+																    <c:when test="${item.pdt_discount_rate != null}">
+																        <c:set var="discountedPrice" value="${item.pdt_amount * (1 - (item.pdt_discount_rate / 100))}" />
+																        <fmt:formatNumber value="${discountedPrice}" type="number" maxFractionDigits="0" />
+																    </c:when>
+																    <c:otherwise>
+																        <fmt:formatNumber value="${item.pdt_amount}" type="number" maxFractionDigits="0" />
+																    </c:otherwise>
+																</c:choose>
                                                             </strong>
                                                             <span class></span>
                                                         </span>
-                                                        <span class="dc_percent">15%</span>
+                                                        <span class="dc_percent">
+                                                        <c:if test="${item.pdt_discount_rate != null}">
+								                            ${item.pdt_discount_rate}%
+								                        </c:if>
+                                                        </span>
                                                     </li>
                                                     <li class="quantity">
-                                                        <a href="javascript:void(0);" id="minusBtn">
+                                                        <a href="<%= contextPath %>/cart/pdtcountdown.do?clist_id=${item.clist_id}" id="minusBtn">
                                                             <img class="QuantityDown" alt="down" src="/SkinImg/img/minus.svg" width="25" height="25" onclick="Basket.outQuantityShortcut('quantity_id_0', 0);">
                                                         </a>
-                                                        <input id="quantity_id_0" name="quantity_name_0" size="2" value="1" type="text">
-                                                        <a href="javascript:void(0);">
-                                                            <img class="QuantityUp" id="plusBtn" alt="up" src="/SkinImg/img/plus.svg" width="25" height="25" onclick="Basket.addQuantityShortcut('quantity_id_0', 0);">
+                                                        <input id="quantity_id_0" name="quantity_name_0" size="2" value="${item.clist_pdt_count}" type="text">
+                                                        <a href="<%= contextPath %>/cart/pdtcountup.do?clist_id=${item.clist_id}&pdt_id=${item.pdt_id}&opt_id=${item.opt_id}" id="plusBtn">
+                                                            <img class="QuantityUp plus_Btn" alt="up" src="/SkinImg/img/plus.svg" width="25" height="25" onclick="Basket.addQuantityShortcut('quantity_id_0', 0);">
                                                         </a>
                                                     </li>
                                                    </ul>
@@ -185,7 +207,7 @@
                                         </div>
                                         <!-- // 설명 -->
                                          <!-- 버튼 영역 -->
-                                          <a href="#none" onclick="basketItemChk('basket_chk_id_0');" class="btnNormal SMScart_option_del_btnTD">삭제</a>
+                                          <a href="<%= contextPath %>/cart/delbtn.do?clist_id=${item.clist_id}" onclick="delBtn();" class="btnNormal SMScart_option_del_btnTD delBtn">삭제</a>
                                           <div class="btnArea typeFull displaynone">
                                             <span class="gLeft">
                                                 <a href="#none" onclick="selBasketDel('basket_chk_id_0');" class="btnNormal SMScart_option_del_btnTD">삭제</a>
@@ -197,6 +219,10 @@
                                           </div>
                                           <!-- // 버튼 영역 -->
                                 </div>
+                                <p></p> <!-- 추가함 -->
+                                </form>
+	                            </c:forEach>
+	                            </c:if>
                                 <!-- // 참고 -->
                              </div>
                              <!-- // 주문 리스트 -->
@@ -410,7 +436,7 @@
                                                     <div class="group_name">Friend</div>
                                                 </div>
                                                 <div class="mileage_txt">
-                                                    구매시 125원 
+                                                    구매시 0원 
                                                     <b>적립예정</b>
                                                 </div>
                                              </div>
@@ -511,7 +537,7 @@
                         <div class="xans-element- xans-order xans-order-totalorder SP_tableBtn_wrap">
                             <div class="SP_tableBtnAlign_right">
                                 <div class="btn buy_btn">
-                                    <a href="#none" onclick="Basket.orderSelectBasket(this)" link-order="/order/orderform.html?basket_type=all_buy" link-login="/member/login.html" class="SP_cm_btn ">구매하기</a>
+                                    <a href="#none" onclick="handleBuyClick(event)" id="buyBtn" link-order="/order/orderform.html?basket_type=all_buy" link-login="/member/login.html" class="SP_cm_btn">구매하기</a>
                                 </div>
                                 <div class="displaynone">
                                     <a href="/" class="SP_cm_btn">계속 쇼핑하기</a>
@@ -1139,42 +1165,296 @@ $("#plusBtn").on("click", function() {
 </script>
 
 <script>
+// 전체 버튼 클릭 시
+$("#allCheck").on("click", function() {
+    const $this = $(this);
+
+    // 전체 버튼 클래스 상태 확인
+    if ($this.hasClass("checked")) {
+        $this.removeClass("checked"); // 클래스 제거
+        $this.css("background-color", "#eee"); // 색상 변경
+        $(".otherCheck").removeClass("checked").css("background-color", "#eee"); // 상품 버튼들 색상 변경
+    } else {
+        $this.addClass("checked"); // 클래스 추가
+        $this.css("background-color", "black"); // 색상 변경
+        $(".otherCheck").addClass("checked").css("background-color", "black"); // 상품 버튼들 색상 변경
+    }
+    calculateTotal();
+});
+
+// 상품 체크 버튼 클릭 시
+$(".otherCheck").on("click", function() {
+    const $this = $(this);
+
+    // 클래스를 확인하여 background-color를 변경
+    if ($this.hasClass("checked")) {
+        $this.removeClass("checked"); // 클래스 제거
+        $this.css("background-color", "#eee"); // 색상 변경
+    } else {
+        $this.addClass("checked"); // 클래스 추가
+        $this.css("background-color", "black"); // 색상 변경
+    }
+
+    // 전체 버튼 상태 업데이트
+    let allSelected = true;
+    $(".otherCheck").each(function() {
+        if (!$(this).hasClass("checked")) {
+            allSelected = false;
+        }
+    });
+
+    // 전체 버튼 상태 변경
+    if (allSelected) {
+        $("#allCheck").addClass("checked").css("background-color", "black");
+    } else {
+        $("#allCheck").removeClass("checked").css("background-color", "#eee");
+    }
+    calculateTotal();
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    calculateTotal(); // 페이지 로드 시 총합 계산
+});
+
+//총 합계 계산 함수
+function calculateTotal() {
+    let totalPrice = 0;
+    let totalQuantity = 0;
+    let totalDiscount = 0;
+
+    // 체크된 상품들만 선택하여 가격과 수량 더하기
+    $(".otherCheck.checked").each(function() {
+        const price = parseFloat($(this).data("price")); // data-price에서 가격 추출
+        const quantity = parseInt($(this).data("quantity")); // data-quantity에서 수량 추출
+        const discountRate = parseFloat($(this).data("rate")) / 100; // data-rate에서 할인율 추출
+
+        if (!isNaN(price) && !isNaN(quantity)) {
+            totalPrice += price * quantity; // 가격 * 수량 더하기
+            totalQuantity += quantity; // 수량 더하기
+            
+         	// 할인 금액 계산 (상품 가격 * 할인율 * 수량)
+            const discountAmount = price * discountRate * quantity;
+            totalDiscount += discountAmount; // 할인 금액 더하기
+        }
+    });
+
+    // 총 가격을 화면에 출력
+    console.log("총 가격: " + totalPrice + "원");
+    console.log("총 수량: " + totalQuantity + "개");
+
+    // 선택된 상품들의 총합을 prdPriceAll에 출력
+    $(".prdPriceAll").text(totalPrice.toLocaleString());
+    
+ 	// 배송비 계산
+    let deliveryFee = (totalPrice >= 50000) ? 0 : 3000; // 총합이 50,000원 이상이면 0, 아니면 3000원
+    $(".prdDelvAll").text(deliveryFee.toLocaleString()); // 배송비 출력
+    
+ 	// 추가 구매 금액 계산
+    const additionalAmount = 50000 - totalPrice; // 50,000원에서 현재 총합을 뺀 금액
+    if (additionalAmount > 0) {
+        // 총합이 50,000원 미만이면 추가 금액 표시
+        $(".amount").text(additionalAmount.toLocaleString()); // 추가 금액 출력
+    } else {
+        $(".amount").text(""); // 50,000원 이상이면 빈 문자열 출력 (안 보이게)
+    }
+    
+    $(".prdDiscountAll").text(totalDiscount.toLocaleString());
+    
+ 	// 할인율 적용 후 총합 계산 (배송비 포함)
+    const finalTotalPrice = totalPrice - totalDiscount + deliveryFee; // 할인 금액을 빼고 배송비를 더해서 최종 가격 계산
+    $(".prdFinalAll").text(finalTotalPrice.toLocaleString()); // 최종 가격 출력
+}
+</script>
+
+<!-- 2024-11-07 추가함 -->
+<!-- <script>
+//구매 버튼 클릭 이벤트 핸들러
+$("#buyBtn").on("click", function(event) {
+    event.preventDefault();  // 기본 링크 동작 막기 (페이지 리로드 방지)
+
+    var url = "/projectOhora/product/orderpage.do?";  // 기본 URL 설정
+    var pdtIds = [];
+    var pdtCounts = [];
+
+    // 모든 .buy_product div 요소를 찾고, 그 안에 있는 데이터 속성 값을 가져옵니다
+    const items = document.querySelectorAll('.buy_product');  // 모든 buy_product 클래스를 가진 div들 찾기
+
+    items.forEach(function(item) {
+        var pdtId = item.getAttribute('data-pdt-id');  // data-pdt-id 값
+        var pdtCount = item.getAttribute('data-pdt-count');  // data-pdt-count 값
+
+        // 값이 있을 경우 배열에 추가
+        if (pdtId && pdtCount) {
+            pdtIds.push("pdtId=" + encodeURIComponent(pdtId));
+            pdtCounts.push("pdtCount=" + encodeURIComponent(pdtCount));
+        }
+    });
+
+    // URL에 파라미터 추가
+    url += pdtIds.join("&") + "&" + pdtCounts.join("&");
+
+    // URL을 확인하기 위해 alert로 출력
+    alert(url);
+
+    // 페이지 리다이렉션
+    // location.href = url;
+});
+</script> -->
+
+<script>
+    // 구매 버튼 클릭 이벤트 핸들러
+    $("#buyBtn").on("click", function(event) {
+        event.preventDefault();  // 기본 링크 동작 막기 (페이지 리로드 방지)
+
+        var url = "/projectOhora/product/orderpage.do?";  // 기본 URL 설정
+        var pdtIds = [];
+        var pdtCounts = [];
+
+        // 모든 .buy_product div 요소를 찾고, 그 안에 있는 데이터 속성 값을 가져옵니다
+        const items = document.querySelectorAll('.buy_product.checked');  // checked 클래스를 가진 buy_product div들 찾기
+
+        items.forEach(function(item) {
+            var pdtId = item.getAttribute('data-pdt-id');  // data-pdt-id 값
+            var pdtCount = item.getAttribute('data-pdt-count');  // data-pdt-count 값
+
+            // 값이 있을 경우 배열에 추가
+            if (pdtId && pdtCount) {
+                pdtIds.push("pdtId=" + encodeURIComponent(pdtId));
+                pdtCounts.push("pdtCount=" + encodeURIComponent(pdtCount));
+            }
+        });
+
+        // URL에 파라미터 추가
+        if (pdtIds.length > 0 && pdtCounts.length > 0) {
+            url += pdtIds.join("&") + "&" + pdtCounts.join("&");
+        } else {
+            // 만약 체크된 항목이 없으면 경고 메시지 출력
+            alert("구매할 제품을 선택해 주세요.");
+            return;  // 아무런 데이터가 없다면 함수 종료
+        }
+
+        // URL을 확인하기 위해 alert로 출력
+        // alert(url);
+
+        // 페이지 리다이렉션
+        location.href = url;
+    });
+</script>
+
+<!-- <script>
 // 전체 버튼, 상품 버튼 체크 색상 변경
 let allChecked = false;
 
 // 전체 체크 버튼 색 변경
-$("#checkcolor1").on("click", function() {
+$("#allCheck").on("click", function() {
     allChecked = !allChecked; // 전체 체크 상태 반전
 
     // 전체와 상품 버튼 모두 같은 색으로 변경
     if (allChecked) {
-        $("#checkcolor1, #checkcolor2").css("background-color", "black");
+        $("#allCheck, .otherCheck").css("background-color", "black");
     } else {
-        $("#checkcolor1, #checkcolor2").css("background-color", "#eee");
+        $("#allCheck, .otherCheck").css("background-color", "#eee");
     }
 });
 
 // 상품 체크 버튼
-$("#checkcolor2").on("click", function() {
-    const isCurrentlyChecked = $("#checkcolor2").css("background-color") === "rgb(0, 0, 0)"; // 현재 색상이 검정인지 확인
+$(".otherCheck").on("click", function() {
+    const isCurrentlyChecked = $(this).css("background-color") === "rgb(0, 0, 0)"; // 현재 색상이 검정인지 확인
 
     // 상품 버튼 색상 변경
     if (isCurrentlyChecked) {
-        $("#checkcolor2").css("background-color", "#eee");
+        $(this).css("background-color", "#eee");
     } else {
-        $("#checkcolor2").css("background-color", "black");
+        $(this).css("background-color", "black");
     }
 
-    // 상품 버튼이 하나라도 해제되면 전체 버튼도 해제
-    if ($("#checkcolor2").css("background-color") === "rgb(238, 238, 238)") {
-        allChecked = false;
-        $("#checkcolor1").css("background-color", "#eee");
-    } else {
-        // 상품 버튼이 모두 체크되면 전체 버튼도 체크
+    // 상품 버튼 중 하나라도 해제되면 전체 버튼도 해제
+    let allSelected = true;
+    $(".otherCheck").each(function() {
+        if ($(this).css("background-color") !== "rgb(0, 0, 0)") {
+            allSelected = false;
+        }
+    });
+
+    // 전체 버튼 상태 업데이트
+    if (allSelected) {
         allChecked = true;
-        $("#checkcolor1").css("background-color", "black");
+        $("#allCheck").css("background-color", "black");
+    } else {
+        allChecked = false;
+        $("#allCheck").css("background-color", "#eee");
     }
 });
+</script> -->
+
+<%-- <script>
+// 상품 체크 버튼
+$(".otherCheck").on("click", function() {
+    // 클릭한 상품 버튼의 clist_select 값 가져오기
+    let clistSelect = $(this).attr("value");
+
+    // 상품 버튼 색상 변경
+    if (clistSelect === "Y") {
+        $(this).css("background-color", "#eee");  // Y이면 black
+        $(this).attr("value", "N");  // Y를 클릭하면 N으로 전환
+    } else {
+        $(this).css("background-color", "black");  // N이면 #eee
+        $(this).attr("value", "Y");  // N을 클릭하면 Y로 전환
+    }
+
+    // 전체 상품 버튼의 value 값을 확인하여 전체 버튼 색상 결정
+    let allChecked = true;
+    $(".otherCheck").each(function() {
+        if ($(this).attr("value") === "N") {
+            allChecked = false;
+            return false; // 하나라도 N이면 반복문 중지
+        }
+    });
+
+    // 전체 버튼 색상 변경
+    if (allChecked) {
+        $("#allCheck").css("background-color", "black");  // 모두 Y면 검정색
+    } else {
+        $("#allCheck").css("background-color", "#eee");  // 하나라도 N이면 회색
+    }
+});
+
+$(".otherCheck").on("click", function() {
+    const clistId = $(this).data("clist-id");  // data-clist-id 속성에서 값 추출
+    const isCurrentlyChecked = $(this).css("background-color") === "rgb(0, 0, 0)"; // 현재 색상이 검정인지 확인
+    
+    // AJAX 요청
+    $.ajax({
+        url: "<%= contextPath %>/cart/checkcart.ajax", // 서버에서 처리할 URL
+        method: "POST",
+        dataType: "json",
+        data: {
+            clistId: clistId,  // data-clist-id 값을 서버로 전달
+            isChecked: !isCurrentlyChecked  // 현재 상태와 반대 값을 서버로 전달
+        },
+        success: function(response) {
+            // 서버 응답 처리 (성공 시)
+            console.log('상품 상태 업데이트 성공');
+            // 서버 응답에 따라 UI 업데이트
+        },
+        error: function(xhr, status, error) {
+            // 서버 응답 실패 처리
+            console.error('상품 상태 업데이트 실패:', error);
+        }
+    });
+});
+</script> --%>
+
+<!-- 삭제 버튼 -->
+<!-- 
+<script>
+	$(document).on("click", ".delBtn", function(){
+		alert("삭제하겠습니다.");
+		$(this).closest("form").submit();  // 클릭된 버튼의 부모 폼을 제출
+	});
 </script>
+ -->
 <%@include file="footer.jsp" %>
 </html>

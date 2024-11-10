@@ -1,6 +1,6 @@
 package mvc.command;
 
-import java.sql.Connection;
+import java.sql.Connection; 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,49 +8,58 @@ import javax.servlet.http.HttpServletResponse;
 import com.util.ConnectionProvider;
 
 import ohora.domain.UserDTO;
-import ohora.persistence.OhoraDAO;
-import ohora.persistence.OhoraDAOImpl;
+import ohora.persistence.MemberDAO;
+import ohora.persistence.MemberDAOImpl;
+
 
 public class IDCheckHandler implements CommandHandler{
 
 	@Override
 	public String process(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		System.out.println("중복체크 진입 완료");
+		boolean isjungbok = true;
+		String msgTag = trim(request.getParameter("msgTag") );
+		String value= trim(request.getParameter("val") ); 
 		
-		String inputType = trim(request.getParameter("type") );
-		String inputVal= trim(request.getParameter("val") ); 
+		System.out.println(msgTag + "/" + value); //idMsg/asdaa22
 		
 		Connection conn = ConnectionProvider.getConnection();
-		OhoraDAO dao = new OhoraDAOImpl(conn);
+		MemberDAO dao = new MemberDAOImpl(conn);
 		UserDTO dto = new UserDTO();
 		
 		
-		if ( inputType == "user_login_id") {
-			dto.setUser_login_id(inputVal);
+		if ( msgTag.equals("idMsg") ) {
+			dto.setUser_login_id(value);
 			
-		} else if ( inputType == "email") {
-			dto.setUser_email(inputVal);
+		} else if ( msgTag.equals("emailMsg")) {
+			dto.setUser_email(value);
 			
 		} else { //폰
-			dto.setUser_tel(inputVal);
+			dto.setUser_tel(value);
 			
 		}
 		
 		try {
-			int rowCount = dao.jungbokCK(conn, dto);
+			isjungbok = dao.jungbokCK(conn, dto);
 			
-			if ( rowCount == 0) System.out.println(" 중복 값 없음 ");
+			return  String.format("{ \"result\":%b }",  isjungbok);
+			/*
+			if ( isjungbok == false) {
+				System.out.println(" 중복 값 없음 ");
+			
+			} else{
+				System.out.println(" 중복 값 있음 ");
+				
+			}
+			*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(" 중복 값 있음 ");
+			
 		} finally {
 			conn.close();
 		}
-		
-		
-		
-		
+
 		return null;
 	}
 	

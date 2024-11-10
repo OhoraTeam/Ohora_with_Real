@@ -10,7 +10,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google" content="notranslate">
-<link rel="stylesheet" href="../resources/cdn-main/login.css">
+<link rel="stylesheet" href="/projectOhora/resources/cdn-main/login.css">
 <script src="http://localhost/jspPro/resources/cdn-main/example.js"></script>
 <style>
  span.material-symbols-outlined{
@@ -27,7 +27,7 @@
             <form
               id="loginForm"
               name=""
-              action="/projectOhora/login/login.do"
+              action= "<%= contextPath %>/login/login.do"
               method="post"
               target="_self"
             >
@@ -196,13 +196,13 @@
 
                       <div class="btnArea typeLogin">
                         <a
-                          href="/member/id/find_id.html"
+                          href="<%= contextPath %>/ohora/findID.jsp"
                           class="btnLogin SMS_login_id SMSloginID_btnTD"
                           id="aa"
                           ><b class="SMS_icon"></b>아이디 찾기</a
                         >
                         <a
-                          href="/member/passwd/find_passwd_info.html"
+                          href="<%= contextPath %>/ohora/findPasswd.jsp"
                           class="btnLogin SMS_login_pw SMSloginPW_btnTD"
                           id="aaa"
                           ><b class="SMS_icon"></b>비밀번호 찾기</a
@@ -217,7 +217,7 @@
 
                       <div class="btnJoin btnArea type1 join_btn">
                         <a
-                          href="/member/join_intro.html"
+                          href="<%= contextPath %>/ohora/join.jsp"
                           class="btnEm SMSjoin_btnTD wh"
                           id="aaaaa"
                           >회원가입 후 혜택받기</a
@@ -286,6 +286,30 @@ $(document).ready(function(){
    
    if ( "${param.fail}" === "true" ) {
       alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+   };
+   
+});
+</script>
+
+<!-- 이거 추가 갱신 된거다.  -->
+<!-- 비밀번호 변경 성공 시 alert 창 띄우기 -->
+<script>
+$(document).ready(function(){
+   
+   if ( "${param.success}" === "true" ) {
+      alert("비밀번호가 성공적으로 변경되었습니다.");
+   };
+   
+});
+</script>
+
+<!-- 이거 추가 갱신 된거다.  -->
+<!-- loginCheckFilter 로 로그인이 안될 시 alert 창 띄우기 -->
+<script>
+$(document).ready(function(){
+   
+   if ( "${param.loginCheck}" === "fail" ) {
+      alert("로그인 후 이용 가능한 페이지입니다.");
    };
    
 });

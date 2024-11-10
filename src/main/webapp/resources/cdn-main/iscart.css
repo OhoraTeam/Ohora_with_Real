@@ -1581,7 +1581,8 @@ element.style {
     content: "원";
 }
 
-#checkcolor1 {
+/* 수정함 */
+#allCheck {
     display: block;
     width: 100%;
     height: 100%;
@@ -1594,7 +1595,8 @@ element.style {
     content: "";
 }
 
-#checkcolor2 {
+/* 수정함 */
+.otherCheck {
     display: block;
     width: 100%;
     height: 100%;

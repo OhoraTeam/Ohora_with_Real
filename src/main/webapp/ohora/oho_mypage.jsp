@@ -1,6 +1,35 @@
+<%@page import="ohora.domain.MyPageDTO"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page trimDirectiveWhitespaces="true" %>
+<%
+    // 상태별 카운트를 계산하기 위한 변수 초기화
+    int countPrepareProduction = 0;
+    int countPrepareDelivery = 0;
+    int countShippedBegin = 0;
+    int countShippedComplete = 0;
+
+    // request에서 orderList를 가져옴
+    ArrayList<MyPageDTO> myPageOrderList = (ArrayList<MyPageDTO>) request.getAttribute("myPageOrderList");
+
+    // 상태별 카운트 계산
+    if (myPageOrderList != null) {
+        for (MyPageDTO order : myPageOrderList) {
+            String status = order.getOpdt_state();  // opdt_state 필드 값을 기준으로 상태 가져오기
+            if ("상품준비중".equals(status)) {
+                countPrepareProduction++;
+            } else if ("배송준비중".equals(status)) {
+                countPrepareDelivery++;
+            } else if ("배송중".equals(status)) {
+                countShippedBegin++;
+            } else if ("배송완료".equals(status)) {
+                countShippedComplete++;
+            }
+        }
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,6 +65,10 @@
                 
 
                 <div class="profile-container">
+                	<c:choose>
+        			<c:when test="${not empty myPageList}">
+        			<!-- myPageList의 첫 번째 요소에 접근 -->
+            		<c:set var="myPageItem" value="${myPageList[0]}" />
                     <div class="member-info-wrap">
 
                         <div class="member-info"> 
@@ -76,18 +109,18 @@
 
                                 <div class="infoMegBox_wrap">
                                     <p class="ment">
-                                        <strong><span><span class="member-name">박준용</span></span></strong>님 반갑습니다.
+                                        <strong><span><span class="member-name">${myPageItem.user_name}</span></span></strong>님 반갑습니다.
                                     </p>
                                     <p class="grade">회원님의 등급은 
                                         <strong class="group">[
                                             <span class="groupName-wrap" id="groupName">
-                                                <span class="group_name">Friend</span>
+                                                <span class="group_name">${myPageItem.mem_name}</span>
                                             </span>]
                                         </strong>입니다. 
                                     </p>
                                     <p class="gradeValue" id="toNextGrade">다음 등급까지 
                                         <span id="changePrd" class="toNext-won">
-                                            <span class="toNext-value">150,000
+                                            <span class="toNext-value">0
                                         </span>원
                                         </span> 남았습니다.
                                     </p>
@@ -114,7 +147,7 @@
                                             <div class="pnc_displayTableInr">
                                                 <div class="myOrderInfoTitle">my point</div>
                                                 <div class="myOrderInfoCont">
-                                                    <a href="" class="pointCount" style="">0</a>
+                                                    <a href="" class="pointCount" style="">${myPageItem.user_point}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,6 +168,8 @@
                         <!-- 오더 인포 랩 -->
 
                     </div>
+                    </c:when>
+    				</c:choose>
                 </div>
 
                 <div class="orderList-layout">
@@ -152,7 +187,7 @@
                                     <a href="">
                                         <span>상품준비중</span>
                                         <span class="count">
-                                            <span id="orderstate_prepare_production_count">0</span>
+                                            <span id="orderstate_prepare_production_count"><%= countPrepareProduction %></span>
                                         </span>
                                     </a>
                                 </li>
@@ -160,7 +195,7 @@
                                     <a href="">
                                         <span>배송준비중</span>
                                         <span class="count">
-                                            <span id="orderstate_prepare_delivery_count">0</span>
+                                            <span id="orderstate_prepare_delivery_count"><%= countPrepareDelivery %></span>
                                         </span>
                                     </a>
                                 </li>
@@ -168,7 +203,7 @@
                                     <a href="">
                                         <span>배송중</span>
                                         <span class="count">
-                                            <span id="xans_myshop_orderstate_shppied_begin_count">0</span>
+                                            <span id="xans_myshop_orderstate_shppied_begin_count"><%= countShippedBegin %></span>
                                         </span>
                                     </a>
                                 </li>
@@ -176,7 +211,7 @@
                                     <a href="">
                                         <span>배송완료</span>
                                         <span class="count">
-                                            <span id="xans_myshop_orderstate_shppied_complate_count">0</span>
+                                            <span id="xans_myshop_orderstate_shppied_complate_count"><%= countShippedComplete %></span>
                                         </span>
                                     </a>
                                 </li>
@@ -205,23 +240,36 @@
                                 </thead>
 
                                 <tbody>
-                                    <tr class="table-record">
-                                        <td class="number center">2024.08.28</td>
+                                	<c:set var="previousDate" value="" />
+									<c:forEach var="orderDetail" items="${myPageOrderDetail}">
+									    <tr class="table-record">
+									        <td class="number center">
+									            <c:choose>
+									                <c:when test="${previousDate != orderDetail.ord_orderdate}">
+									                    <fmt:formatDate value="${orderDetail.ord_orderdate}" pattern="yyyy-MM-dd" />
+									                    <c:set var="previousDate" value="${orderDetail.ord_orderdate}" />
+									                </c:when>
+									                <c:otherwise>
+									                    <!-- 날짜가 이전과 같으면 빈 셀로 둡니다 -->
+									                </c:otherwise>
+									            </c:choose>
+									        </td>
+									
+									        <td class="subject alignLeft">
+									            <a href="">${orderDetail.opdt_name}</a>
+									        </td>
+									
+									        <td class="price center">${orderDetail.opdt_amount}</td>
+									
+									        <td class="totalprice">0</td>
+									
+									        <td class="center number">
+									            <a href="" class="ordhistory-linkView">자세히보기</a>
+									        </td>
+									    </tr>
+									</c:forEach>
 
-                                        <td class="subject alignLeft">
-                                            <a href="">N 젤리 피치 네일</a>
-                                        </td>
-
-                                        <td class="price center">33,600</td>
-
-                                        <td class="totalprice">0</td>
-                                        
-                                        <td class="center number">
-                                            <a href="" class="ordhistory-linkView">자세히보기</a>
-                                        </td>                    
-                                    </tr>
-
-                                    <tr class="table-record">
+                                    <!-- <tr class="table-record">
                                         <td rowspan="3" class="number center ">2024.08.27</td>
 
                                         <td class="subject alignLeft">
@@ -238,7 +286,7 @@
                                     </tr>
                                     <tr class="table-record">
                                         <td class="number center displayNone">2024.08.27</td>
-                                        <!-- 같은 날짜로 묶이는 애들은 디스플레이논 클래스가 주어짐 -->
+                                        같은 날짜로 묶이는 애들은 디스플레이논 클래스가 주어짐
 
                                         <td class="subject alignLeft">
                                             <a href="">N 젤리 피치 네일</a>
@@ -250,7 +298,7 @@
                                         
                                         <td class="center number">
                                             <a href="" class="ordhistory-linkView displayNone">자세히보기</a>
-                                            <!-- 얘도 -->
+                                            얘도
                                         </td>                    
                                     </tr>
                                     <tr class="table-record">
@@ -267,7 +315,7 @@
                                         <td class="center number">
                                             <a href="" class="ordhistory-linkView displayNone">자세히보기</a>
                                         </td>                    
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                                 <!-- 주문 내역 없을 경우? -->
                                 <tbody class="noOrder displayNone">
@@ -288,8 +336,8 @@
                             <ul>
                                 <!-- li 마다 after로 > 모양있음 -->
                                 <li><a href="">주문내역</a></li>
-                                <li><a href="">회원정보</a></li>
-                                <li><a href="">배송주소록</a></li>
+                                <li><a href="<%=contextPath %>/member/modify.do?userId=<%=userId%>">회원정보</a></li>
+                                <li><a href="<%=contextPath %>/address/addressselect.do">배송주소록</a></li>
                                 <li><a href="">이용약관</a></li>
                             </ul>
                         </div>
@@ -304,13 +352,13 @@
                                 </li>
                                 <li class="point-history">
                                     <a href="">적립금 내역
-                                        <span class="count">0원</span>
+                                        <span class="count">${myPageItem.user_point} 원</span>
                                     </a>
                                 </li>
                                                 
                                 <li class="caty">
                                     <a href="">장바구니
-                                        <span class="">2개</span>
+                                        <span class=""><%= productCount != null ? productCount : 0 %> 개</span>
                                     </a>
                                 </li>
                                                 

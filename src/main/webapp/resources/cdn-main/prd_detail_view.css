@@ -1,11 +1,5 @@
 @charset "UTF-8";
 
-body {
-    max-width: 1200px; /* 페이지의 최대 너비를 설정 */
-    margin: 0 auto; /* 페이지를 가로 중앙 정렬 */
-    padding: 0 20px; /* 좌우 여백을 일정하게 추가 */
-    box-sizing: border-box; /* 패딩이 너비 계산에 포함되도록 */
-}
 /* 테이블 전체 스타일 */
 .infoTbl {
     width: 100%;
@@ -97,6 +91,7 @@ body {
     margin: 0 auto; /* 중앙 정렬 */
     border-bottom: 1px solid #ddd; /* 하단에 얇은 선 */
     position: relative;
+    margin: 40px 0;
 }
 
 /* 탭 리스트 항목 */
@@ -109,7 +104,7 @@ body {
 /* 탭 링크 스타일 */
 .SP_detailPrdTab_wrap li a {
     display: block; /* a 요소가 부모 li의 전체 너비를 차지하도록 설정 */
-    padding: 15px 0;
+    /* padding-top: 15px; */
     font-size: 16px;
     color: #333;
     text-decoration: none;
@@ -121,7 +116,7 @@ body {
 /* 탭 선택된 상태 스타일 (하단에 두꺼운 검은 선) */
 .SP_detailPrdTab_wrap li.selected a {
     color: #000; /* 선택된 탭 텍스트 색상 */
-    border-bottom: 3px solid #000; /* 선택된 탭 하단 두꺼운 선 */
+    border-bottom: 4px solid #000; /* 선택된 탭 하단 두꺼운 선 */
     padding-bottom: 14px; /* 하단 패딩 조정으로 균형 맞춤 */
 }
 
@@ -284,9 +279,11 @@ body {
 }
 
 input[type="text"] {
-  width: 30px;
   text-align: center;
   margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  width: 100px;
 }
 
 /* 추가 구성 상품 섹션 */
@@ -325,9 +322,8 @@ input[type="text"] {
 
 /* 총 상품 금액 */
 .SP_totalPrice {
-  font-size: 18px;
+  font-size: 20px;
   margin-top: 20px;
-  font-weight: bold;
   text-align: center;
 }
 
@@ -342,7 +338,7 @@ input[type="text"] {
   text-align: center;
   display: inline-block;
   width: 48%;
-  padding: 10px;
+  /* padding: 10px; */
   font-size: 16px;
   color: white;
   text-decoration: none;
@@ -392,6 +388,7 @@ input[type="text"] {
     color: #000;
     font-weight: bold;
     line-height: 1;
+    padding: 5px 0;
 }
 
 .renew_prdDetail .SP_addSetThumb {
@@ -490,13 +487,6 @@ input[type="text"] {
     /* vertical-align: top !important; */
     background: none !important;
     border-radius: 0 !important;
-}
-
-.SP_totalPrice {
-    font-size: 18px;
-    margin-top: 20px;
-    font-weight: bold;
-    text-align: right;
 }
 
 /* .SP_dtPrdOptionList_wrap > .SP_prdListItemInfo .display_판매가, .SP_dtPrdOptionList_wrap > .SP_prdListItemInfo .display_가격 {
@@ -755,4 +745,117 @@ body.renewed_widget {
 /* 탭 선택 부드러운 스크롤 이동 */
 html {
     scroll-behavior: smooth; /* 모든 스크롤에 부드러운 이동 적용 */
+}
+
+
+
+/* 선택 상품 영역 CSS */
+/* 전체 회색 배경 */
+.add_product {
+    background-color: #f8f8f8;
+    padding: 15px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative; /* .delete 버튼의 위치 기준 */
+}
+
+/* 상품명 및 설명 */
+.add_product .product {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    flex: 2; /* 더 많은 공간 차지 */
+    order: 1; /* 순서 설정 */
+}
+
+.add_product .product span {
+    font-size: 14px;
+    color: #888;
+    display: block;
+    margin-top: 4px;
+}
+
+/* 수량 조절 버튼 및 입력 */
+.add_product .quantity {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    order: 2; /* 순서 설정 - 상품명 바로 아래로 위치 */
+}
+
+.add_product .quantity input[type="text"] {
+    width: 40px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    margin: 0 8px;
+    padding: 5px;
+    appearance: none; /* 스핀 박스 제거 */
+}
+
+.add_product .quantity .up, .add_product .quantity .down {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ddd;
+    background-color: #f7f7f7;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.add_product .quantity .up:hover, .add_product .quantity .down:hover {
+    background-color: #e0e0e0;
+}
+
+/* 삭제 버튼 */
+.add_product .delete {
+    font-size: 20px;
+    color: #bbb;
+    cursor: pointer;
+    position: absolute; /* 절대 위치 설정 */
+    top: 10px; /* 상단 여백 */
+    right: 10px; /* 우측 여백 */
+    text-align: center;
+    transition: color 0.2s ease;
+}
+
+.add_product .delete:hover {
+    color: #888;
+}
+
+/* 오른쪽 가격 부분 */
+.add_product .right {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    flex-shrink: 0;
+    text-align: right;
+    min-width: 70px;
+    order: 3; /* 순서 설정 - 수량 선택 뒤에 위치 */
+}
+
+
+/* 함께 많이 구매한 디자인*/
+.designBuyingWith{
+	padding: 20px 0;
+}
+
+.SP_detailContainer{
+	padding-top: 35px;
+}
+
+.option{
+	display: inline-block;
+	width: 135px;
+	font-weight: bold;
+	padding: 5px 0;
 }

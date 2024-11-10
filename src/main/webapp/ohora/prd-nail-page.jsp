@@ -15,53 +15,14 @@
 <link  rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="http://localhost/jspPro/resources/cdn-main/example.js"></script>
+<script type="text/javascript">
+	window.hasProductCountSession = ${not empty sessionScope.productCount};
+</script>
 <style>
  span.material-symbols-outlined{
     vertical-align: text-bottom;
  }  
  
-</style>
-<style>
-.alert-box {
-    background-color: skyblue;
-    padding: 20px;
-    color: white;
-    border-radius: 5px;
-    display: none;
-  }
-</style>
-
-<style>
-.popup-wrap{
-  background-color:#fff;
-  justify-content:center;
-  align-items:center;  
-  position:fixed; 
-  top:100px;
-  left:300px;
-  right:200px;
-  bottom:1200px; 
-  display:none; /* 이벤트가 발생할 때 띄우기 위해 숨김 */
-  padding:15px; 
-  align-items:center;
-  justify-content:center;
-}
-.popup{
-  width:100%;              /*  반응형 이기 때문에 가로값은 100% */
-  max-width:400px;       /*  팝업의 최대 크기지정 */
-  border: 1px solid #eeeeee;
-  border-radius:10px;     /*  둥글둥글한 디자인을 위해 각을 없앱니다. */
-  overflow:hidden;         /*  각을 없앴을 때 내부 영역이 튀어나오는걸 방지 */
-  background-color:#ffffff;
-  box-shadow: 5px 10px 10px 1px rgba(0,0,0,.3); /* 그림자 효과. */
-}
-.popup-head{
-  width:100%;
-  height:50px;
-  display:flex; 
-  align-items:center;
-  justify-content:center;
-}
 </style>
 </head>
 <body>
@@ -86,11 +47,17 @@
 						<li id="selected-menu-care"><a href="#">outlet</a></li>
 					</ul>
 
-					<ul class="menu_2ul">
-						<li class="selected-menu-2" id="selected-menu-all"><a href="#">ALL</a></li>
-						<li id="selected-menu-nail"><a href="#">네일</a></li>
-						<li id="selected-menu-strip"><a href="#">페디</a></li>
-						<li id="selected-menu-care"><a href="#">케어&amp;툴</a></li>
+					<ul class="menu_ul2">
+						<li class="selected-menu-2" id="selected-menu-all" onclick="moveToCategory(0)"><a href="#">ALL</a></li>
+						<li id="selected-menu-nail">
+						    <a href="#" onclick="moveToCategory(1)">네일</a>
+						</li>
+						<li id="selected-menu-nail">
+						    <a href="#" onclick="moveToCategory(2)">페디</a>
+						</li>
+						<li id="selected-menu-nail">
+						    <a href="#" onclick="moveToCategory(3)">케어&amp;툴</a>
+						</li>
 					</ul>
 					
 					<ul class="menu_3ul" style="display:none">
@@ -100,6 +67,20 @@
 					</ul>
 
 					</div>
+					
+					
+					<script>
+					function moveToCategory(catno) {
+					    // 원하는 URL로 이동
+					    window.location.href = '/projectOhora/product/list.do?catno=' + catno + '&currentPage=1';
+					}
+					
+					function moveToNewBestOulet() {
+						
+					}
+					</script>
+					
+					
 
 
 				</div>
@@ -147,9 +128,9 @@
 					<div id="select-sort-wrap">
 						<span class="selected-type">정렬방식</span>
 						<ul class="sort_type_list" style="display: none;">
-							<li class="sort-way"><a href="">신상품</a></li>
-							<li class="sort-way"><a href="">인기상품</a></li>
-							<li class="sort-way"><a href="">조회수</a></li>
+							<li class="sort-way"><a href="#" onclick="sortByNew()">신상품</a></li>
+							<li class="sort-way"><a href="#" onclick="sortBySales()">인기상품</a></li>
+							<li class="sort-way"><a href="#" onclick="sortByViewcount()">조회수</a></li>
 						</ul>
 						<script>
 							document
@@ -166,6 +147,30 @@
 												}
 											});
 						</script>
+						
+						<script>
+						function updateSortParameter(newSort) {
+						    const currentUrl = new URL(window.location.href);
+						    currentUrl.searchParams.set('sort', newSort); // 기존의 'sort'를 새로 설정
+						    window.location.href = currentUrl.toString();  // 새 URL로 이동
+						}
+
+						// 조회수 정렬
+						function sortByViewcount() {
+						    updateSortParameter('viewcount');
+						}
+
+						// 신상품 정렬
+						function sortByNew() {
+						    updateSortParameter('new');
+						}
+
+						// 인기상품(판매량) 정렬
+						function sortBySales() {
+						    updateSortParameter('sales');
+						}
+						</script>
+					
 					</div>
 
 					<button type="button" id="my-design">내가 원하는 디자인 찾기</button>
@@ -277,6 +282,7 @@
                </script>
 
 			</div>
+			
 
 			<div id="item-list-wrap">
 				<div id="item-list">
@@ -294,10 +300,10 @@
 					           <li id="itembox${ status.index + 1 }" class="item-wrap">
 							<div class="item-container">
 								<dl>
-									<a href="" class="item-viewlink"></a>
+									<a href="/projectOhora/product/view.do?product_id=${pdt.pdt_id}" class="item-viewlink"></a>
 									<div class="item-image">
-										<img src="../resources/images/prd_image/마롱네일1jpg.jpg" alt="" width="800" height="800" />
-										<img src="../resources/images/prd_image/마롱네일2.jpg" alt="" width="800" height="800" />
+										<img src="${pdt.pdt_img_url }" alt="" width="800" height="800" />
+										<img src="${pdt.pdt_img_url2 }" alt="" width="800" height="800" />
 									</div>
 									<div class="item-info">
 										<dd class="name-container">
@@ -322,9 +328,19 @@
 												<span class="rvCount">${pdt.pdt_review_count}</span>
 											</p>
 										</div>
-										<div class="cart-in">
-											<img src="../image/btn_list_cart.gif" data-pdtid="${pdt.pdt_id}" alt="" />
-										</div>
+										
+										<c:choose>
+											<c:when test="${userId != null}">
+												<div class="cart-in">
+													<img src="../image/btn_list_cart.gif" data-pdtid="${pdt.pdt_id}" alt="" onclick="addCart(this);" />
+												</div>
+											</c:when>
+											<c:otherwise>
+												<div class="cart-in">
+													<img src="../image/btn_list_cart.gif" data-pdtid="${pdt.pdt_id}" alt=""  />
+												</div>
+											</c:otherwise>
+										</c:choose>
 									</div>
 								</dl>
 							</div>
@@ -335,101 +351,54 @@
 
 					</ul>
 				</div>
-				
-				<!-- 장바구니 알림 모달창 -->
-				<div class="container">
-				  <div class="popup-wrap" id="popup">
-				    <div class="popup">	
-				      <div class="popup-head">
-				          <span class="head-title"><img src="/projectOhora/resources/images/cart_image/icon_cart_gray.png"> 장바구니에 상품을 담았습니다.</span>
-				      </div>
-				    </div>
-				</div>
-				</div>
-				
-				 <!-- <div class="alert-box" id="alert">알림창 입니다.</div>
-			    <button onclick="alertOpen()">확인</button>
-			    <button onclick="alertClose()">취소</button> -->
-			    
-			    <script>
-				 // 상품 페이지의 JavaScript에서 실행
-				    function setProductIdCookie(pdtid) {
-				        // 쿠키에 pdt_id 값을 저장 (유효 기간은 1시간으로 설정)
-				        document.cookie = "pd_tid=" + pd_tid + "; path=/; max-age=" + (1 * 60 * 60);
-				    }
-	
-				    // 예: pdt_id가 101인 경우 쿠키에 저장
-				    setProductIdCookie($(this).data("pdtid")); // 받아온 상품번호를 쿠키에 저장
-
-			    </script>
-			    
-			    <script>
-
-			        /* function alertOpen() {
-			            document.getElementById('alert').style.display = 'block';
-			        }
-			        function alertClose() {
-			            document.getElementById('alert').style.display = 'none';
-			        } */
 			
-			    </script>
+				
+				
+				
+				<div id="page-container">    
+				    <a href="?catno=${categoryNumber}&currentPage=1&sort=${param.sort}<c:if test='${param.searchWord != null}'>&searchWord=${param.searchWord}</c:if>" class="first">first</a>            
+				    
+				    <c:if test="${pvo.currentPage > 1}">
+				        <a href="?catno=${categoryNumber}&currentPage=${pvo.currentPage - 1}&sort=${param.sort}<c:if test='${param.searchWord != null}'>&searchWord=${param.searchWord}</c:if>" class="prev">prev</a>
+				    </c:if>                
+				    
+				    <ol>
+				        <c:forEach begin="${pvo.start}" end="${pvo.end}" step="1" var="i">
+				            <c:choose>                
+				                <c:when test="${i eq pvo.currentPage}">
+				                    <li class="on"><a href="#" class="this">${i}</a></li>
+				                </c:when>                
+				                <c:otherwise>
+				                    <li><a href="?catno=${categoryNumber}&currentPage=${i}&sort=${param.sort}<c:if test='${param.searchWord != null}'>&searchWord=${param.searchWord}</c:if>">${i}</a></li>
+				                </c:otherwise>
+				            </c:choose>
+				        </c:forEach>
+				    </ol>                
+				    
+				    <c:if test="${pvo.end < pvo.totalPages}">
+				        <a href="?catno=${categoryNumber}&currentPage=${pvo.currentPage + 1}&sort=${param.sort}<c:if test='${param.searchWord != null}'>&searchWord=${param.searchWord}</c:if>" class="next">next</a>
+				    </c:if>                
+				    
+				    <a href="?catno=${categoryNumber}&currentPage=${pvo.totalPages}&sort=${param.sort}<c:if test='${param.searchWord != null}'>&searchWord=${param.searchWord}</c:if>" class="last">last</a>
+				</div>
+				
+<%-- 				
+<c:if test="${pvo == null}">
+    <p>pvo is null</p>
+</c:if>
+<c:if test="${pvo != null}">
+    <p>pvo is not null</p>
+    <p>Current Page: ${pvo.currentPage}</p>
+    <p>Start Page: ${pvo.start}</p>
+    <p>End Page: ${pvo.end}</p>
+</c:if> 
+--%>
+
+				
 
 
-				<script>
-				/*
-				// 장바구니에 담으면 알림창 띄우기
-			            $("div.cart-in img").on("click", function (event) {
-			               // alert($(this).data("pdtid"));
-			               // event.preventDefault(); // 기본 a 태그 동작 막기
-			               if (cart.jsp에서 $(this).data("pdtid") !exist in cart 인지 판단) {
-			               $(".count.EC-Layout-Basket-count").each(function(){
-			            	   let currentCount = parseInt($(this).text());
-			            	   $(this).text(currentCount + 1); // 장바구니옆 숫자 아이콘 증가
-			            	   
-	            		        // 0.5초 후에 모달을 1초 동안 표시한 후, 0.5초 동안 서서히 사라짐
-	            		        setTimeout(function() {
-	            		            $("#popup").fadeIn(500).delay(1000).fadeOut(500);
-	            		        }, 500); // 버튼 클릭 후 0.5초 딜레이
-			            	 
-			               });
-							
-						} else { // 카트에 같은 상품이 있으면?
-							// alert
-							alert
-							
-						}
-			            })
-			            */
-	            </script>
-	            <script>
-	            		/* 
-	            		상품목록에서 카트아이콘() 클릭하면
-						장바구니에 1개(숫자 +1) 추가됨 
-						+ < 장바구니에 상품을 담았습니다. >
-						모달창이 0.5초후에 뜨고, 1초후에 사라지고, 0.5초만에 투명해져서 없어짐
-						
-						똑같은 상품을 담으려고 하면?
-						alert
-						www.ohora.ar 내용 : 
-						장바구니에 동일한 상품이 있습니다. 
-						장바구니에 추가하시겠습니까? 확인/취소
-						-> 확인 누르면 숫자는 안 올라감. 품목종류의 갯수만 카운트
-						그리고 모달창 뜸
-						
-						<a href="/order/basket.html"
-			                ><b class="count EC-Layout-Basket-count">0</b></a
-			              >
-							Text에 +1
-	            		*/
-	            		
-	            		/* $(".count.EC-Layout-Basket-count").on("click",function(){
-	            			
-	            		}) */
-	            		
-	            		
-	            </script>
 
-				<div id="page-container">
+				<!-- <div id="page-container">
 					<a href="" class="first">first</a> <a href="" class="prev">prev</a>
 					<ol>
 						<li class="on"><a href="#" class="this">1</a></li>
@@ -444,7 +413,10 @@
 						<li><a href="#">10</a></li>
 					</ol>
 					<a href="" class="next">next</a> <a href="" class="last">last</a>
-				</div>
+				</div> -->
+				
+				
+				
 
 				<script>
 					var pageLinks = document
@@ -454,7 +426,7 @@
 
 					pageLinks.forEach(function(link) {
 						link.addEventListener("click", function(e) {
-							e.preventDefault();
+							/* e.preventDefault(); */
 
 							// 모든 li에서 on 클래스 제거
 							pageItems.forEach(function(item) {
@@ -731,4 +703,103 @@
 	</div>
 	<%@include file="footer.jsp" %>
 </body>
+<!-- 장바구니 버튼 ajax 처리 -->
+<script>
+   function addCart(element) {
+      
+      // alert("test");
+      
+      const productId = $(element).data("pdtid");
+      const userId = <%= userId != null ? userId : 0 %>;
+      
+      $.ajax({
+         url : "<%= contextPath %>/cart/addcart.ajax"
+         , type : "POST"
+         , dataType: "json" // 받는다.
+         , data : {
+            user_id : userId
+            , pdt_id : productId
+         }
+         , success : function(response) {
+            if ( response.error ) {
+               alert(response.error);
+            } else {
+               var cartCount = response.newCartCount;
+               var message = response.message;
+               
+               // 장바구니 count 업데이트
+               $(".EC-Layout-Basket-count").text(cartCount);
+               
+               // 메세지 알림 표시
+               alert(message);
+            }
+         }
+         , error : function() {
+            alert("오류 발생");
+         }
+      });
+      
+   };
+</script>
+
+
+<script>
+$(document).ready(function() {
+    // 장바구니 담기 버튼 클릭
+    $(document).on("click", "div.cart-in img", function () {
+    	
+        const pdtId = $(this).data("pdtid");
+        let basketItems = [];
+
+        // 기존 장바구니 쿠키 확인
+        const cookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('basketItems='));
+
+        if (cookie) {
+            try {
+                basketItems = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+            } catch (e) {
+                console.error("쿠키 파싱 에러:", e);
+                basketItems = [];
+            }
+        }
+
+        // 동일 상품 확인 (문자열로 비교)
+        const existingItem = basketItems.find(item => item.id === pdtId.toString());
+
+        if (existingItem) {
+      /*       if (confirm("장바구니에 동일한 상품이 있습니다. 수량을 추가하시겠습니까?")) {
+                existingItem.quantity += 1;
+                alert("상품 수량이 증가했습니다.");
+            } */
+        } else {
+            // 새 상품 추가
+            basketItems.push({
+                id: pdtId.toString(),  // ID를 문자열로 저장
+                quantity: 1
+            });
+            
+            // 장바구니 카운트 업데이트
+            const currentCount = parseInt($(".EC-Layout-Basket-count").text()) || 0;
+            $(".EC-Layout-Basket-count").text(currentCount + 1);
+            
+            //alert("장바구니에 상품이 추가되었습니다.");
+        }
+
+        // 쿠키에 저장
+        document.cookie = "basketItems=" + 
+            encodeURIComponent(JSON.stringify(basketItems)) + 
+            "; path=/";
+
+        // 모달창 표시
+        $("#popup")
+            .fadeIn(500)
+            .delay(1000)
+            .fadeOut(500);
+    });
+});
+</script>
+				
+				
 </html>

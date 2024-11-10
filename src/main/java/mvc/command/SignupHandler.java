@@ -1,6 +1,6 @@
 package mvc.command;
 
-import java.security.MessageDigest;
+import java.security.MessageDigest; 
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -15,8 +15,9 @@ import com.util.ConnectionProvider;
 
 import ohora.domain.DeptVO;
 import ohora.domain.UserDTO;
-import ohora.persistence.OhoraDAO;
-import ohora.persistence.OhoraDAOImpl;
+import ohora.persistence.MemberDAO;
+import ohora.persistence.MemberDAOImpl;
+
 
 public class SignupHandler implements CommandHandler {
 
@@ -101,7 +102,7 @@ public class SignupHandler implements CommandHandler {
 //		System.out.println(smsAgree);
 		
 		Connection conn = ConnectionProvider.getConnection();
-		OhoraDAO dao = new OhoraDAOImpl(conn);
+		MemberDAO dao = new MemberDAOImpl(conn);
 
 		UserDTO dto = new UserDTO();
 			dto.setUser_id(0);
@@ -120,6 +121,7 @@ public class SignupHandler implements CommandHandler {
 			
 		try {
 			int rowCount = dao.insert(conn, dto);
+			
 			
 			if ( rowCount == 1) System.out.println(" 가입완료 ");
 			

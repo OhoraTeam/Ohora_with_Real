@@ -31,7 +31,7 @@
 
             <div id="member-edit-cont">
                 <div class="mem-edit-layout">
-                    <form action="" method="post" id="editForm" name="editForm" >
+                    <form action="${pageContext.request.contextPath}/member/modifyDone.do" method="post" id="editForm" name="editForm"  onsubmit="combinePhoneNumber();">
                         <!-- form 상단에 엄청난 인풋들이 히든으로 숨겨져 있으나 용도를 알 수 없음(아마 암호화 관련?). 생략 -->
 
 
@@ -64,7 +64,8 @@
                                                     <span class="th-required">*</span>
                                                 </th>
                                                 <td>
-                                                    <input type="text" readonly="readonly" id="member-id" name="member-id" >
+                                                    <input type="text" readonly="readonly" id="member-id" name="member-id" value="${user.user_login_id}">
+                                                
                                                     <span class="SP_stxt">(영문소문자/숫자, 4~16자)</span>
                                                 </td>
                                             </tr>
@@ -75,7 +76,7 @@
                                                     <span class="th-required">*</span>
                                                 </th>
                                                 <td>
-                                                    <input type="password"  id="passwd" name="passwd" maxlength="16">
+                                                    <input type="password"  id="passwd" name="passwd" maxlength="16" value="">
                                                     <div class="pw-guideBox-wrap">
                                                         <div class="pw-guideBox">
                                                             <div class="pw-guide-content">
@@ -104,7 +105,7 @@
                                                 <span class="th-required">*</span>
                                                </th> 
                                                <td>
-                                                    <input type="password" id="passwd-confirm" name="passwd-confirm" maxlength="16">
+                                                    <input type="password" id="passwd-confirm" name="passwd-confirm" maxlength="16" value="">
                                                     <span id="pwConfirmMsg" class=""></span>
                                                     <!-- 이 span은 비밀번호 확인 다르게 입력하면 class에 error 추가되면서 글 튀어나옴 -->
                                                </td>
@@ -116,75 +117,8 @@
                                                     <span class="th-required">*</span>
                                                 </th>
                                                 <td>
-                                                    <input type="text" id="name" name="name" maxlength="30" readonly="readonly" value="박준용">
+                                                    <input type="text" id="name" name="name" maxlength="30" readonly="readonly" value="${user.user_name}">
                                                 </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="th-title">주소</span>
-                                                    <span class="th-required displayNone">*</span>
-                                                </th>
-                                                <td>
-                                                    <div class="address">
-                                                        <input type="text" readonly="readonly" maxlength="14" id="postcode1" name="postcode1" >
-                                                        <a href="#" class="postBtn" onclick="addrFinder()" id="postBtn">우편번호</a>
-
-                                                    </div>
-
-                                                    <div class="address">
-                                                        <input type="text" readonly="readonly" id="addr1" name="addr1">
-                                                        <span class="addrguide">기본주소</span>
-                                                    </div>
-                                                    <div class="address">
-                                                        <input type="text" id="addr2" name="addr2">
-                                                        <span class="addrguide">나머지주소</span>
-                                                        <span class="addrguide">(선택입력가능)</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th scope="row">
-                                                    <span class="th-title">일반전화</span>
-                                                    <span class="th-required">*</span>
-                                                </th>
-                                                <td>
-                                                    <select id="phone1" name="phone[]">
-                                                        <option value="02">02</option>
-                                                        <option value="031">031</option>
-                                                        <option value="032">032</option>
-                                                        <option value="033">033</option>
-                                                        <option value="041">041</option>
-                                                        <option value="042">042</option>
-                                                        <option value="043">043</option>
-                                                        <option value="044">044</option>
-                                                        <option value="051">051</option>
-                                                        <option value="052">052</option>
-                                                        <option value="053">053</option>
-                                                        <option value="054">054</option>
-                                                        <option value="055">055</option>
-                                                        <option value="061">061</option>
-                                                        <option value="062">062</option>
-                                                        <option value="063">063</option>
-                                                        <option value="064">064</option>
-                                                        <option value="0502">0502</option>
-                                                        <option value="0503">0503</option>
-                                                        <option value="0504">0504</option>
-                                                        <option value="0505">0505</option>
-                                                        <option value="0506">0506</option>
-                                                        <option value="0507">0507</option>
-                                                        <option value="070">070</option>
-                                                        <option value="010">010</option>
-                                                        <option value="011">011</option>
-                                                        <option value="016">016</option>
-                                                        <option value="017">017</option>
-                                                        <option value="018">018</option>
-                                                        <option value="019">019</option>
-                                                        <option value="0508">0508</option>
-                                                    </select>-<input id="phone2" name="phone[]" maxlength="4"  value="" type="text">-<input id="phone3" name="phone[]" maxlength="4" value="" type="text">
-                                                </td>
-
                                             </tr>
 
                                             <tr>
@@ -207,12 +141,36 @@
                                                          - 
                                                         <input id="mobile3" name="mobile[]" maxlength="4" value="" type="text">
                                                         <button type="button" id="btn-verify-mobile" onclick="alert('간편인증 온클릭')">간편인증</button>
+                                                        <input type="hidden" id="user_tel" value="" name="user_tel">
                                                     </div>
                                                     <div class="must-write">
                                                         <!-- 간편인증 누르면 튀어나와서 인증번호 쓰라는 칸인데 일단 패스 -->
                                                          <!-- 만약 구현할거면 class=must-write 찾아서 구현.. -->
                                                     </div>
                                                 </td>
+                                                
+                                                <script>
+												    // 서버에서 받아온 휴대전화 번호 
+												    var user_tel = "${user.user_tel}";
+												
+												    var telParts = user_tel.split("-");
+												    
+												    document.getElementById("mobile1").value = telParts[0];
+												    document.getElementById("mobile2").value = telParts[1];					
+												    document.getElementById("mobile3").value = telParts[2];
+												</script>
+												
+												<script>
+												function combinePhoneNumber() {
+												    // Get values from the individual phone number parts
+												    const part1 = document.getElementById("mobile1").value;
+												    const part2 = document.getElementById("mobile2").value;
+												    const part3 = document.getElementById("mobile3").value;
+												    
+												    // Combine them and store in the hidden input
+												    document.getElementById("user_tel").value = part1 + "-" + part2 + "-" + part3;
+												}
+												</script>
                                             </tr>
 
                                             <tr>
@@ -235,7 +193,7 @@
                                                     <span class="th-required">*</span>
                                                 </th>
                                                 <td>
-                                                    <input type="text" id="email1" name="email1">
+                                                    <input type="text" id="email1" name="email1" value="${user.user_email}">
                                                     <span id="emailMsg" class=""></span>
                                                     <!-- 얘도 형식 어긋나면 error 클래스 추가되면서 옆에 튀어나옴 -->
                                                     <!-- 공백 시에는 이메일을 입력해 주세요. 라고 나옴 -->
@@ -284,15 +242,28 @@
                                                     <span class="th-title">생년월일</span>
                                                     <span class="th-required displayNone">*</span>
                                                 </th>
-                                                <td>
-                                                    <input id="birth_year" name="birth_year" class="inputTypeText" maxlength="4" value="" type="text">
-                                                    년
-                                                    <input id="birth_month" name="birth_month" class="inputTypeText" maxlength="2" value="" type="text">
-                                                    월
-                                                    <input id="birth_day" name="birth_day" class="inputTypeText" maxlength="2" value="" type="text">
-                                                    일
-                                                </td>
+                                               <td>
+											    <input id="birth_year" name="birth_year" class="inputTypeText" maxlength="4" 
+											           value="" type="text">
+											    년
+											    <input id="birth_month" name="birth_month" class="inputTypeText" maxlength="2" 
+											           value="" type="text">
+											    월
+											    <input id="birth_day" name="birth_day" class="inputTypeText" maxlength="2" 
+											           value="" type="text">
+											    일
+											</td>
                                         </tbody>
+                                        <script>
+										    // 서버에서 전달받은 user_birth 값을 JavaScript로 전달
+										    var user_birth = "${user.user_birth}";  // 서버에서 받아온 값
+										    var birthParts = user_birth.split("-");  // '-'를 기준으로 분리
+										
+										    // 분리된 값을 각각 연, 월, 일 입력 필드에 할당
+										    document.getElementById("birth_year").value = birthParts[0];  // 연도
+										    document.getElementById("birth_month").value = birthParts[1];  // 월
+										    document.getElementById("birth_day").value = birthParts[2];    // 일
+										</script>
                                     </table>
 
                                 </div>
@@ -323,14 +294,16 @@
 
                             <div class="SP_submitBtn_wrap">
                                 <div class="SP_submitBtn_left">
-                                    <a href="" class="cnclBtn">취소</a>
+                                    <a href="<%=contextPath %>/mypage/mypage.do?userId=<%=userId%>" class="cnclBtn">취소</a>
+                                    
                                     <a href="" class="memDelBtn" onclick="">회원탈퇴</a>
                                 </div>
                                 <div class="SP_submitBtn_right">
-                                    <a href="" class="modifyBtn" onclick="">회원정보수정</a>
+                                    <!-- <a href="javascript:void(0);" class="modifyBtn" onclick="document.getElementById('editForm').submit();">회원정보수정</a> -->
+                                    <button class="modifyBtn" type="submit" style="border: 1px solid; #ddd; padding: 15px 30px;">회원정보수정&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;</button>
                                 </div>
                             </div>
-
+						
 
                         
                         </div>
@@ -338,7 +311,9 @@
 
 
                     </form>
-
+					
+						
+						
                 </div>
             </div>
         
@@ -349,58 +324,6 @@
     </div>
     <!-- 전체 container 끝 -->
 </body>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
-    function addrFinder() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
-                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-                var addr = ''; // 주소 변수
-                var extraAddr = ''; // 참고항목 변수
-
-                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-                    addr = data.roadAddress;
-                } else { // 사용자가 지번 주소를 선택했을 경우(J)
-                    addr = data.jibunAddress;
-                }
-
-                // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById('postcode1').value = data.zonecode;
-                document.getElementById("addr1").value = addr;
-
-                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                if(data.userSelectedType === 'R'){
-                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                        extraAddr += data.bname;
-                    }
-                    // 건물명이 있고, 공동주택일 경우 추가한다.
-                    if(data.buildingName !== '' && data.apartment === 'Y'){
-                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                    }
-                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                    if(extraAddr !== ''){
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                    // 조합된 참고항목을 해당 필드에 넣는다.
-                    document.getElementById("addr1").value += extraAddr;
-                
-                } else {
-                    document.getElementById("addr1").value += '';
-                }
-
-                
-                // 커서를 상세주소 필드로 이동한다.
-                document.getElementById("addr2").focus();
-            }
-        }).open();
-    }
-</script>
 <%@include file="footer.jsp" %>
 <script src="../resources/js/oho_memInfo.js"></script>
 </html>
